@@ -1,0 +1,5 @@
+CREATE USER biblioteca IDENTIFIED BY biblioteca 
+DEFAULT TABLESPACE users
+TEMPORARY TABLESPACE temp;
+
+GRANT DBA TO biblioteca;
