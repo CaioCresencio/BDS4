@@ -1,0 +1,21 @@
+Modelo Lógico Biblioteca:
+
+Entidades:
+	CATEGORIA_LEITOR(codigo_categoria,descricao,tempo_emprestimo)
+	
+	LEITOR(id_leitor, nome, email, endereco, rg , prontuario, telefone, estado, 	cidade,cod_categoria)
+		cod_categoria referencia CATEGORIA_LEITOR
+	
+	FUNCIONARIO(nrm_prontuario, endereco, data_nascimento, telefone, nome)
+
+Livros:
+
+	CATEGORIA_LITERARIA(codigo, descricao, tempo_emprestimo)
+	
+	OBRA_LITERARIA(ISBN, qtd_exemplares, nrm_edicao, data_publicacao, editora, titulo_obra)
+
+	AUTOR(nome,codigo_isbn)
+		codigo_isbn referencia OBRA_LITERARIA
+	
+	
+	EXEMPLAR (codigo_exemplar, status)
