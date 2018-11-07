@@ -3,8 +3,13 @@ Modelo Lógico Biblioteca:
 Entidades:
 	CATEGORIA_LEITOR(codigo_categoria,descricao,tempo_emprestimo)
 	
-	LEITOR(id_leitor, nome, email, endereco, rg , prontuario, telefone, estado, cidade,cod_categoria)
+    RG(rg,estado)
+        
+	LEITOR(id_leitor, nome, email, endereco, prontuario, telefone, estado, cidade,cod_categoria,rg)
 		cod_categoria referencia CATEGORIA_LEITOR
+        rg referencia RG
+    
+    
 	
 	FUNCIONARIO(nrm_prontuario, endereco, data_nascimento, telefone, nome)
 
