@@ -14,8 +14,22 @@ Livros:
 	
 	OBRA_LITERARIA(ISBN, qtd_exemplares, nrm_edicao, data_publicacao, editora, titulo_obra)
 
+    
 	AUTOR(nome,codigo_isbn)
 		codigo_isbn referencia OBRA_LITERARIA
+Funcionais:
 	
-	
-	EXEMPLAR (codigo_exemplar, status)
+	EXEMPLAR (codigo_exemplar, status,id_obra)
+
+        id_obra referencia OBRA_LITERARIA
+    
+    RESERVA(codigo_reserva,data,prontuario_funcionario,id_leitor)
+        prontuario_funcionario referencia FUNCIONARIO
+        id_leitor referencia LEITOR
+    
+    
+    EMPRESTIMO (codigo_emp, data_emp, data_dev, id_leitor, prontuario_funcionario,codigo_exemplar)
+        id_leitor referencia LEITOR
+        prontuario_funcionario referencia FUNCIONARIO
+        codigo_exemplar referencia EXEMPLAR
+    
