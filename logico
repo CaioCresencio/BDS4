@@ -3,7 +3,7 @@ Modelo Lógico Biblioteca:
 Entidades:
 	CATEGORIA_LEITOR(codigo_categoria,descricao,tempo_emprestimo)
 	
-	LEITOR(id_leitor, nome, email, endereco, rg , prontuario, telefone, estado, 	cidade,cod_categoria)
+	LEITOR(id_leitor, nome, email, endereco, rg , prontuario, telefone, estado, cidade,cod_categoria)
 		cod_categoria referencia CATEGORIA_LEITOR
 	
 	FUNCIONARIO(nrm_prontuario, endereco, data_nascimento, telefone, nome)
@@ -11,12 +11,29 @@ Entidades:
 Livros:
 
 	CATEGORIA_LITERARIA(codigo, descricao, tempo_emprestimo)
+
+    LISTA_AUTORES(id_lista)
+        id_obra referencia OBRA_LITERARIA
 	
-	OBRA_LITERARIA(ISBN, qtd_exemplares, nrm_edicao, data_publicacao, editora, titulo_obra)
+    LISTA_PALAVRAS(id_lista)
+        id_obra referencia OBRA_LITERARIA
+    
+    AUTOR(id_autor,nome,id_lista)
+        id_lista referencia LISTA_AUTORES
+
+    PALAVRAS_CHAVE(id_palavra,conteudo,id_lista)
+        id_lista referencia LISTA_PALAVRAS
+
+ 
+	OBRA_LITERARIA(id_obra,isbn, qtd_exemplares, nrm_edicao, data_publicacao, editora, titulo_obra,autores,palavras_chave)
+        autores referencia LISTA_AUTORES
+        palavras_chave referencia LISTA_PALAVRAS
+       
 
     
 	AUTOR(nome,codigo_isbn)
 		codigo_isbn referencia OBRA_LITERARIA
+
 Funcionais:
 	
 	EXEMPLAR (codigo_exemplar, status,id_obra)
