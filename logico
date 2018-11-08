@@ -8,8 +8,6 @@ Entidades:
 	LEITOR(id_leitor, nome, email, endereco, prontuario, telefone, estado, cidade,cod_categoria,rg)
 		cod_categoria referencia CATEGORIA_LEITOR
         rg referencia RG
-    
-    
 	
 	FUNCIONARIO(nrm_prontuario, endereco, data_nascimento, telefone, nome)
 
