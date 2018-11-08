@@ -17,10 +17,10 @@ Livros:
 
 	CATEGORIA_LITERARIA(codigo, descricao, tempo_emprestimo)
 
-    LISTA_AUTORES(id_lista)
+    LISTA_AUTORES(id_lista,id_obra)
         id_obra referencia OBRA_LITERARIA
 	
-    LISTA_PALAVRAS(id_lista)
+    LISTA_PALAVRAS(id_lista,id_obra)
         id_obra referencia OBRA_LITERARIA
     
     AUTOR(id_autor,nome,id_lista)
@@ -30,14 +30,8 @@ Livros:
         id_lista referencia LISTA_PALAVRAS
 
  
-	OBRA_LITERARIA(id_obra,isbn, qtd_exemplares, nrm_edicao, data_publicacao, editora, titulo_obra,autores,palavras_chave)
-        autores referencia LISTA_AUTORES
-        palavras_chave referencia LISTA_PALAVRAS
+	OBRA_LITERARIA(id_obra,isbn, qtd_exemplares, nrm_edicao, data_publicacao, editora, titulo_obra)
        
-
-    
-	AUTOR(nome,codigo_isbn)
-		codigo_isbn referencia OBRA_LITERARIA
 
 Funcionais:
 	

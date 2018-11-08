@@ -15,13 +15,30 @@ maxvalue 99999;
 CREATE TABLE categoria_literaria(
     codigo INT PRIMARY KEY,
     descricao VARCHAR2(70) NOT NULL,
-    tempo_emprestimo INT NOT NULL);
+    tempo_emprestimo INT NOT NULL
+    );
+    
+
+
+CREATE TABLE obra_literaria(
+    id_obra INT PRIMARY KEY,
+    isbn VARCHAR2(50) NOT NULL,
+    qtd_exemplares INT NOT NULL,
+    nrm_edicao INT NOT NULL,
+    data_publicacao DATE NOT NULL,
+    editora VARCHAR2(50) NOT NULL,
+    titulo_obra VARCHAR2(50) NOT NULL,
+    categoria_obra INT NOT NULL);
     
 CREATE TABLE lista_autores(
-    id_lista INT PRIMARY KEY);
+    id_lista INT PRIMARY KEY,
+    id_obra INT NOT NULL,
+    FOREIGN KEY (id_obra) REFERENCES obra_literaria(id_obra));
     
 CREATE TABLE lista_palavras(
-    id_lista INT PRIMARY KEY);
+    id_lista INT PRIMARY KEY,
+    id_obra INT NOT NULL,
+    FOREIGN KEY (id_obra) REFERENCES obra_literaria(id_obra));
     
 CREATE TABLE palavra_chave(
     id_palavra INT PRIMARY KEY,
@@ -34,23 +51,6 @@ CREATE TABLE autor(
     nome VARCHAR2(50) NOT NULL,
     id_lista INT NOT NULL,
     FOREIGN KEY (id_lista) REFERENCES lista_autores(id_lista));
-    
-
-CREATE TABLE obra_literaria(
-    id_obra INT PRIMARY KEY,
-    isbn VARCHAR2(50) NOT NULL,
-    qtd_exemplares INT NOT NULL,
-    nrm_edicao INT NOT NULL,
-    data_publicacao DATE NOT NULL,
-    editora VARCHAR2(50) NOT NULL,
-    titulo_obra VARCHAR2(50) NOT NULL,
-    categoria_obra INT NOT NULL,
-    id_lista_palavras INT NOT NULL,
-    id_lista_autores INT NOT NULL,
-    FOREIGN KEY (categoria_obra) REFERENCES categoria_literaria(codigo),
-    FOREIGN KEY (id_lista_palavras) REFERENCES lista_autores(id_lista),
-    FOREIGN KEY (id_lista_autores) REFERENCES lista_autores(id_lista)
-    );
     
 CREATE TABLE categoria_leitor(
     codigo_categoria INT PRIMARY KEY,
@@ -87,6 +87,19 @@ CREATE TABLE reserva (
     codigo_exemplar INT NOT NULL,
     prontuario_func INT NOT NULL,
     id_leitor INT NOT NULL,
+    FOREIGN KEY (codigo_exemplar) REFERENCES exemplar(codigo_exemplar),
     FOREIGN KEY (prontuario_func) REFERENCES funcionario(prontuario_func),
     FOREIGN KEY (id_leitor) REFERENCES leitor(id_leitor)
     ); 
+    
+CREATE TABLE emprestimo (
+    codigo_emp INT PRIMARY KEY,
+    data_dev DATE NOT NULL,
+    data_emp DATE DEFAULT SYSDATE,
+    codigo_exemplar INT NOT NULL,
+    id_leitor INT NOT NULL,
+    prontuario_func INT NOT NULL,
+    FOREIGN KEY (codigo_exemplar) REFERENCES exemplar(codigo_exemplar),
+    FOREIGN KEY (prontuario_func) REFERENCES funcionario(prontuario_func),
+    FOREIGN KEY (id_leitor) REFERENCES leitor(id_leitor)
+    );
