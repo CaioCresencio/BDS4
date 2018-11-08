@@ -16,9 +16,7 @@ CREATE TABLE categoria_literaria(
     codigo INT PRIMARY KEY,
     descricao VARCHAR2(70) NOT NULL,
     tempo_emprestimo INT NOT NULL
-    );
-    
-
+);    
 
 CREATE TABLE obra_literaria(
     id_obra INT PRIMARY KEY,
@@ -28,40 +26,45 @@ CREATE TABLE obra_literaria(
     data_publicacao DATE NOT NULL,
     editora VARCHAR2(50) NOT NULL,
     titulo_obra VARCHAR2(50) NOT NULL,
-    categoria_obra INT NOT NULL);
+    categoria_obra INT NOT NULL
+);
     
 CREATE TABLE lista_autores(
     id_lista INT PRIMARY KEY,
     id_obra INT NOT NULL,
-    FOREIGN KEY (id_obra) REFERENCES obra_literaria(id_obra));
+    FOREIGN KEY (id_obra) REFERENCES obra_literaria(id_obra)
+);
     
 CREATE TABLE lista_palavras(
     id_lista INT PRIMARY KEY,
     id_obra INT NOT NULL,
-    FOREIGN KEY (id_obra) REFERENCES obra_literaria(id_obra));
+    FOREIGN KEY (id_obra) REFERENCES obra_literaria(id_obra)
+);
     
 CREATE TABLE palavra_chave(
     id_palavra INT PRIMARY KEY,
     conteudo VARCHAR2(20)NOT NULL,
     id_lista INT NOT NULL,
-    FOREIGN KEY (id_lista) REFERENCES lista_palavras(id_lista));
+    FOREIGN KEY (id_lista) REFERENCES lista_palavras(id_lista)
+);
 
 CREATE TABLE autor(
     id_autor INT PRIMARY KEY,
     nome VARCHAR2(50) NOT NULL,
     id_lista INT NOT NULL,
-    FOREIGN KEY (id_lista) REFERENCES lista_autores(id_lista));
+    FOREIGN KEY (id_lista) REFERENCES lista_autores(id_lista)
+);
     
 CREATE TABLE categoria_leitor(
     codigo_categoria INT PRIMARY KEY,
     descricao VARCHAR2(100) NOT NULL,
     tempo_emprestimo INT NOT NULL
-    );
+);
     
 CREATE TABLE RG (
     numero INT PRIMARY KEY,
     estado INT NOT NULL
-    );
+);
     
 CREATE TABLE leitor(
     id_leitor INT PRIMARY KEY,
@@ -73,13 +76,14 @@ CREATE TABLE leitor(
     email VARCHAR2(40) NOT NULL,
     rg INT NOT NULL,
     FOREIGN KEY (rg) REFERENCES rg(numero)
-    );
+);
     
 CREATE TABLE exemplar(
     codigo_exemplar INT PRIMARY KEY,
     status INT NOT NULL,
     id_obra INT NOT NULL,
-    FOREIGN KEY (id_obra) REFERENCES obra_literaria (id_obra));
+    FOREIGN KEY (id_obra) REFERENCES obra_literaria (id_obra)
+);
     
 CREATE TABLE reserva (
     codigo_reserva INT PRIMARY KEY,
@@ -90,7 +94,7 @@ CREATE TABLE reserva (
     FOREIGN KEY (codigo_exemplar) REFERENCES exemplar(codigo_exemplar),
     FOREIGN KEY (prontuario_func) REFERENCES funcionario(prontuario_func),
     FOREIGN KEY (id_leitor) REFERENCES leitor(id_leitor)
-    ); 
+); 
     
 CREATE TABLE emprestimo (
     codigo_emp INT PRIMARY KEY,
@@ -102,4 +106,4 @@ CREATE TABLE emprestimo (
     FOREIGN KEY (codigo_exemplar) REFERENCES exemplar(codigo_exemplar),
     FOREIGN KEY (prontuario_func) REFERENCES funcionario(prontuario_func),
     FOREIGN KEY (id_leitor) REFERENCES leitor(id_leitor)
-    );
+);
