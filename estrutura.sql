@@ -51,10 +51,11 @@ increment by 1
 maxvalue 9999;
 
 CREATE TABLE lista_palavras(
-    id_lista INT PRIMARY KEY,
     id_obra INT NOT NULL,
-    FOREIGN KEY (id_obra) REFERENCES obra_literaria(id_obra)
-    ON DELETE CASCADE
+    id_palavra INT NOT NULL,
+    PRIMARY KEY(id_obra, id_palavra),
+    FOREIGN KEY (id_obra) REFERENCES obra_literaria(id_obra),
+    FOREIGN KEY (id_palavra) REFERENCES palavra_chave(id_palavra)
 );
 
 CREATE SEQUENCE seq_palavraChave
@@ -67,8 +68,10 @@ CREATE TABLE palavra_chave(
     id_palavra INT PRIMARY KEY,
     conteudo VARCHAR2(20)NOT NULL,
     id_lista INT NOT NULL,
+    conteudo VARCHAR2(20)NOT NULL,
     FOREIGN KEY (id_lista) REFERENCES lista_palavras(id_lista)
     ON DELETE CASCADE
+
 );
 
 CREATE SEQUENCE seq_autor
