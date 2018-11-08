@@ -13,9 +13,9 @@ increment by 1
 maxvalue 99999;
 
 CREATE TABLE categoria_literaria(
-    codigo INT PRIMARY KEY,
+    codigo INT PRIMARY KEY ,
     descricao VARCHAR2(70) NOT NULL,
-    tempo_emprestimo INT NOT NULL
+    tempo_emprestimo INT NOT NULL 
 );    
 
 CREATE TABLE obra_literaria(
@@ -26,19 +26,23 @@ CREATE TABLE obra_literaria(
     data_publicacao DATE NOT NULL,
     editora VARCHAR2(50) NOT NULL,
     titulo_obra VARCHAR2(50) NOT NULL,
-    categoria_obra INT NOT NULL
+    categoria_obra INT NOT NULL,
+    FOREIGN KEY (categoria_obra) REFERENCES categoria_literaria(codigo)
+    ON DELETE CASCADE
 );
     
 CREATE TABLE lista_autores(
     id_lista INT PRIMARY KEY,
     id_obra INT NOT NULL,
-    FOREIGN KEY (id_obra) REFERENCES obra_literaria(id_obra)
+    FOREIGN KEY (id_obra) REFERENCES obra_literaria(id_obra) 
+    ON DELETE CASCADE
 );
     
 CREATE TABLE lista_palavras(
     id_lista INT PRIMARY KEY,
     id_obra INT NOT NULL,
     FOREIGN KEY (id_obra) REFERENCES obra_literaria(id_obra)
+    ON DELETE CASCADE
 );
     
 CREATE TABLE palavra_chave(
@@ -46,6 +50,7 @@ CREATE TABLE palavra_chave(
     conteudo VARCHAR2(20)NOT NULL,
     id_lista INT NOT NULL,
     FOREIGN KEY (id_lista) REFERENCES lista_palavras(id_lista)
+    ON DELETE CASCADE
 );
 
 CREATE TABLE autor(
@@ -53,6 +58,7 @@ CREATE TABLE autor(
     nome VARCHAR2(50) NOT NULL,
     id_lista INT NOT NULL,
     FOREIGN KEY (id_lista) REFERENCES lista_autores(id_lista)
+    ON DELETE CASCADE
 );
     
 CREATE TABLE categoria_leitor(
@@ -76,6 +82,7 @@ CREATE TABLE leitor(
     email VARCHAR2(40) NOT NULL,
     rg INT NOT NULL,
     FOREIGN KEY (rg) REFERENCES rg(numero)
+    
 );
     
 CREATE TABLE exemplar(
