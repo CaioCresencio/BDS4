@@ -30,7 +30,6 @@ Livros:
  
 	OBRA_LITERARIA(id_obra,isbn, qtd_exemplares, nrm_edicao, data_publicacao, editora, titulo_obra)
        
-
 Funcionais:
 	
 	EXEMPLAR (codigo_exemplar, status,id_obra)
