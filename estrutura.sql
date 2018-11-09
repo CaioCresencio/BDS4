@@ -1,4 +1,3 @@
-
 CREATE TABLE funcionario (
     prontuario_func INT PRIMARY KEY,
     endereco VARCHAR2(70) NOT NULL,
@@ -13,7 +12,7 @@ increment by 1
 maxvalue 9999;
 
 CREATE TABLE categoria_literaria(
-    codigo INT PRIMARY KEY ,
+    codigo_categoria INT PRIMARY KEY ,
     descricao VARCHAR2(70) NOT NULL,
     tempo_emprestimo INT NOT NULL 
 );    
@@ -38,9 +37,10 @@ CREATE TABLE obra_literaria(
 );
     
 CREATE TABLE lista_autores(
-    id_lista INT PRIMARY KEY,
+    id_autor INT,
     id_obra INT NOT NULL,
-    FOREIGN KEY (id_obra) REFERENCES obra_literaria(id_obra) 
+    FOREIGN KEY (id_obra) REFERENCES obra_literaria(id_obra) ON DELETE CASCADE,
+    FOREIGN KEY (id_autor) REFERENCES autor(id_autor) 
     ON DELETE CASCADE
 );
 
@@ -66,12 +66,7 @@ maxvalue 9999;
 
 CREATE TABLE palavra_chave(
     id_palavra INT PRIMARY KEY,
-    conteudo VARCHAR2(20)NOT NULL,
-    id_lista INT NOT NULL,
-    conteudo VARCHAR2(20)NOT NULL,
-    FOREIGN KEY (id_lista) REFERENCES lista_palavras(id_lista)
-    ON DELETE CASCADE
-
+    conteudo VARCHAR2(20)NOT NULL
 );
 
 CREATE SEQUENCE seq_autor
@@ -82,10 +77,7 @@ maxvalue 9999;
 
 CREATE TABLE autor(
     id_autor INT PRIMARY KEY,
-    nome VARCHAR2(50) NOT NULL,
-    id_lista INT NOT NULL,
-    FOREIGN KEY (id_lista) REFERENCES lista_autores(id_lista)
-    ON DELETE CASCADE
+    nome VARCHAR2(50) NOT NULL
 );
 
 CREATE SEQUENCE seq_categoriaLeitor
@@ -121,7 +113,6 @@ CREATE TABLE leitor(
     email VARCHAR2(40) NOT NULL,
     rg INT NOT NULL,
     FOREIGN KEY (rg) REFERENCES rg(numero)
-    
 );
 
 CREATE SEQUENCE seq_exemplar
