@@ -14,31 +14,31 @@ Entidades:
 Livros:
 
 	CATEGORIA_LITERARIA(codigo, descricao, tempo_emprestimo)
-
-    LISTA_AUTORES(id_lista,id_obra)
-        id_obra referencia OBRA_LITERARIA
 	
-    LISTA_PALAVRAS(id_lista,id_obra)
+	OBRA_LITERARIA(id_obra,isbn, qtd_exemplares, nrm_edicao, data_publicacao, editora, titulo_obra, cod_categoriaLivro)
+		cod_categoriaLivro referencia CATEGORIA_LITERARIA
+		
+	AUTOR(id_autor,nome)
+
+    LISTA_AUTORES(id_obra, id_autor)
         id_obra referencia OBRA_LITERARIA
-    
-    AUTOR(id_autor,nome,id_lista)
-        id_lista referencia LISTA_AUTORES
-
-    PALAVRAS_CHAVE(id_palavra,conteudo,id_lista)
-        id_lista referencia LISTA_PALAVRAS
-
- 
-	OBRA_LITERARIA(id_obra,isbn, qtd_exemplares, nrm_edicao, data_publicacao, editora, titulo_obra)
+		id_autor referencia AUTOR
+	
+    PALAVRAS_CHAVE(id_palavra, conteudo)
+	
+	LISTA_PALAVRAS(id_obra, id_palavra)
+        id_obra referencia OBRA_LITERARIA
+		id_palavra referencia PALAVRAS_CHAVE
        
 Funcionais:
 	
 	EXEMPLAR (codigo_exemplar, status,id_obra)
-
-        id_obra referencia OBRA_LITERARIA
+		id_obra referencia OBRA_LITERARIA
     
-    RESERVA(codigo_reserva,data,prontuario_funcionario,id_leitor)
+    RESERVA(codigo_reserva,data,prontuario_funcionario,id_leitor, codigo_exemplar)
         prontuario_funcionario referencia FUNCIONARIO
         id_leitor referencia LEITOR
+		codigo_exemplar referencia EXEMPLAR
     
     
     EMPRESTIMO (codigo_emp, data_emp, data_dev, id_leitor, prontuario_funcionario,codigo_exemplar)
