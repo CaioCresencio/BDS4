@@ -5,7 +5,7 @@ Entidades:
 	
     RG(rg,estado)
         
-	LEITOR(id_leitor, nome, email, endereco, prontuario, telefone, estado, cidade,cod_categoria,rg)
+	LEITOR(id_leitor, nome, email, endereco,data_nascimento, prontuario, telefone, estado, cidade,cod_categoria,rg)
 		cod_categoria referencia CATEGORIA_LEITOR
         rg referencia RG
 	
