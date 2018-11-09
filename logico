@@ -9,14 +9,14 @@ Entidades:
 		cod_categoria referencia CATEGORIA_LEITOR
         rg referencia RG
 	
-	FUNCIONARIO(nrm_prontuario, endereco, data_nascimento, telefone, nome)
+	FUNCIONARIO(prontuario_func, endereco, data_nascimento, telefone, nome)
 
 Livros:
 
 	CATEGORIA_LITERARIA(codigo, descricao, tempo_emprestimo)
 	
-	OBRA_LITERARIA(id_obra,isbn, qtd_exemplares, nrm_edicao, data_publicacao, editora, titulo_obra, cod_categoriaLivro)
-		cod_categoriaLivro referencia CATEGORIA_LITERARIA
+	OBRA_LITERARIA(id_obra,isbn, qtd_exemplares, nrm_edicao, data_publicacao, editora, titulo_obra, cod_categoriaObra)
+		cod_categoriaObra referencia CATEGORIA_LITERARIA
 		
 	AUTOR(id_autor,nome)
 
