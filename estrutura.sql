@@ -32,52 +32,8 @@ CREATE TABLE obra_literaria(
     editora VARCHAR2(50) NOT NULL,
     titulo_obra VARCHAR2(50) NOT NULL,
     categoria_obra INT NOT NULL,
-    FOREIGN KEY (categoria_obra) REFERENCES categoria_literaria(codigo)
+    FOREIGN KEY (categoria_obra) REFERENCES categoria_literaria(codigo_categoria)
     ON DELETE CASCADE
-);
-    
-CREATE TABLE lista_autores(
-    id_autor INT,
-    id_obra INT NOT NULL,
-    FOREIGN KEY (id_obra) REFERENCES obra_literaria(id_obra) ON DELETE CASCADE,
-    FOREIGN KEY (id_autor) REFERENCES autor(id_autor) 
-    ON DELETE CASCADE
-);
-
-CREATE SEQUENCE seq_listaPalavras
-nocycle
-start with 1
-increment by 1
-maxvalue 9999;
-
-CREATE TABLE lista_palavras(
-    id_obra INT NOT NULL,
-    id_palavra INT NOT NULL,
-    PRIMARY KEY(id_obra, id_palavra),
-    FOREIGN KEY (id_obra) REFERENCES obra_literaria(id_obra),
-    FOREIGN KEY (id_palavra) REFERENCES palavra_chave(id_palavra)
-);
-
-CREATE SEQUENCE seq_palavraChave
-nocycle
-start with 1
-increment by 1
-maxvalue 9999;
-
-CREATE TABLE palavra_chave(
-    id_palavra INT PRIMARY KEY,
-    conteudo VARCHAR2(20)NOT NULL
-);
-
-CREATE SEQUENCE seq_autor
-nocycle
-start with 1
-increment by 1
-maxvalue 9999;
-
-CREATE TABLE autor(
-    id_autor INT PRIMARY KEY,
-    nome VARCHAR2(50) NOT NULL
 );
 
 CREATE SEQUENCE seq_categoriaLeitor
@@ -112,6 +68,8 @@ CREATE TABLE leitor(
     data_nascimento DATE NOT NULL,
     email VARCHAR2(40) NOT NULL,
     rg INT NOT NULL,
+    categoria_leitor INT NOT NULL,
+    FOREIGN KEY (categoria_leitor) REFERENCES categoria_leitor(codigo_categoria) ON DELETE CASCADE,
     FOREIGN KEY (rg) REFERENCES rg(numero)
 );
 
@@ -120,6 +78,7 @@ nocycle
 start with 1
 increment by 1
 maxvalue 9999;
+
 
 CREATE TABLE exemplar(
     codigo_exemplar INT PRIMARY KEY,
@@ -145,6 +104,52 @@ CREATE TABLE reserva (
     FOREIGN KEY (id_leitor) REFERENCES leitor(id_leitor)
 ); 
 
+CREATE SEQUENCE seq_palavraChave
+nocycle
+start with 1
+increment by 1
+maxvalue 9999;
+
+CREATE TABLE palavra_chave(
+    id_palavra INT PRIMARY KEY,
+    conteudo VARCHAR2(20)NOT NULL
+);
+
+CREATE SEQUENCE seq_autor
+nocycle
+start with 1
+increment by 1
+maxvalue 9999;
+
+CREATE TABLE autor(
+    id_autor INT PRIMARY KEY,
+    nome VARCHAR2(50) NOT NULL
+);
+
+    
+CREATE TABLE lista_autores(
+    id_autor INT,
+    id_obra INT NOT NULL,
+    FOREIGN KEY (id_obra) REFERENCES obra_literaria(id_obra) ON DELETE CASCADE,
+    FOREIGN KEY (id_autor) REFERENCES autor(id_autor) 
+    ON DELETE CASCADE
+);
+
+CREATE SEQUENCE seq_listaPalavras
+nocycle
+start with 1
+increment by 1
+maxvalue 9999;
+
+CREATE TABLE lista_palavras(
+    id_obra INT NOT NULL,
+    id_palavra INT NOT NULL,
+    PRIMARY KEY(id_obra, id_palavra),
+    FOREIGN KEY (id_obra) REFERENCES obra_literaria(id_obra),
+    FOREIGN KEY (id_palavra) REFERENCES palavra_chave(id_palavra)
+);
+
+
 CREATE SEQUENCE seq_emprestimo
 nocycle
 start with 1
@@ -162,3 +167,7 @@ CREATE TABLE emprestimo (
     FOREIGN KEY (prontuario_func) REFERENCES funcionario(prontuario_func),
     FOREIGN KEY (id_leitor) REFERENCES leitor(id_leitor)
 );
+
+
+
+
