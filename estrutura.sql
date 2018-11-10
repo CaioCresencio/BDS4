@@ -57,7 +57,7 @@ maxvalue 9999;
 CREATE TABLE RG (
     id_rg INT PRIMARY KEY,
     numero INT NOT NULL,
-    estado INT NOT NULL
+    estado varchar2(15) NOT NULL
 );
 
 CREATE SEQUENCE seq_leitor
@@ -87,10 +87,9 @@ start with 1
 increment by 1
 maxvalue 9999;
 
-
 CREATE TABLE exemplar(
     codigo_exemplar INT PRIMARY KEY,
-    status INT NOT NULL,
+    status varchar2(10) NOT NULL,
     id_obra INT NOT NULL,
     FOREIGN KEY (id_obra) REFERENCES obra_literaria (id_obra)
 );
