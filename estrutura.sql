@@ -31,8 +31,8 @@ CREATE TABLE obra_literaria(
     data_publicacao DATE NOT NULL,
     editora VARCHAR2(50) NOT NULL,
     titulo_obra VARCHAR2(50) NOT NULL,
-    categoria_obra INT NOT NULL,
-    FOREIGN KEY (categoria_obra) REFERENCES categoria_literaria(codigo_categoria)
+    codigo_categoria INT NOT NULL,
+    FOREIGN KEY (codigo_categoria) REFERENCES categoria_literaria(codigo_categoria)
     ON DELETE CASCADE
 );
 
@@ -48,8 +48,15 @@ CREATE TABLE categoria_leitor(
     tempo_emprestimo INT NOT NULL
 );
     
+CREATE SEQUENCE seq_rg
+nocycle
+start with 1
+increment by 1
+maxvalue 9999;
+
 CREATE TABLE RG (
-    numero INT PRIMARY KEY,
+    id_rg INT PRIMARY KEY,
+    numero INT NOT NULL,
     estado INT NOT NULL
 );
 
@@ -62,15 +69,16 @@ maxvalue 9999;
 CREATE TABLE leitor(
     id_leitor INT PRIMARY KEY,
     nome VARCHAR2(100) NOT NULL,
-    estado INT NOT NULL,
+    cidade VARCHAR2(100) NOT NULL,
+    estado VARCHAR2(5) NOT NULL,
     telefone INT NOT NULL,
     prontuario INT NOT NULL,
     data_nascimento DATE NOT NULL,
     email VARCHAR2(40) NOT NULL,
-    rg INT NOT NULL,
-    categoria_leitor INT NOT NULL,
-    FOREIGN KEY (categoria_leitor) REFERENCES categoria_leitor(codigo_categoria) ON DELETE CASCADE,
-    FOREIGN KEY (rg) REFERENCES rg(numero)
+    id_rg NOT NULL,
+    codigo_categoria INT NOT NULL,
+    FOREIGN KEY (codigo_categoria) REFERENCES categoria_leitor(codigo_categoria) ON DELETE CASCADE,
+    FOREIGN KEY (id_rg) REFERENCES rg(id_rg)
 );
 
 CREATE SEQUENCE seq_exemplar
