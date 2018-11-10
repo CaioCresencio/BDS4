@@ -43,6 +43,7 @@ INSERT INTO obra_literaria
 VALUES(seq_obraLiteraria.nextval,'333BBA',4,1,'21-10-2015','IFSP','Jogos educacionais',5);
 
 SELECT * FROM obra_literaria;
+SELECT * FROM exemplar;
 --  Autores 
 DELETE  FROM autor;
 
@@ -86,9 +87,9 @@ VALUES (seq_categoriaLeitor.nextval,'Usuário externo',7);
 SELECT * FROM categoria_leitor;
 
 -- RG
-INSERT INTO rg (id_rg,numero,estado) VALUES(seq_rg.nextval,1234,1);
-INSERT INTO rg (id_rg,numero,estado) VALUES(seq_rg.nextval,2345,1);
-INSERT INTO rg (id_rg,numero,estado) VALUES(seq_rg.nextval,3456,1);
+INSERT INTO rg (id_rg,numero,estado) VALUES(seq_rg.nextval,1234,'SP');
+INSERT INTO rg (id_rg,numero,estado) VALUES(seq_rg.nextval,2345,'SP');
+INSERT INTO rg (id_rg,numero,estado) VALUES(seq_rg.nextval,3456,'SP');
 
 -- Leitor
 
