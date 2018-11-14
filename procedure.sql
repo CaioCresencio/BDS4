@@ -69,12 +69,13 @@ END;
 -- Cadastro de leitor 
 
 BEGIN 
-    cadastro_leitor('caio','teste','sp',333,1052,'26-05-1858','canelada',2,2345,'AT');
+    cadastro_leitor('caio','teste','sp',333,10252,'26-05-1858','canelada',2,23225,'AT');
 END;
 /
-SELECT * FROM RG;
-SELECT * from leitor where prontuario = 22;
-SELECT * FROM LEITOR;
+
+select * from rg;
+
+SELECT * FROM leitor;
 CREATE OR REPLACE PROCEDURE cadastro_leitor(
     nome_l VARCHAR2, cidade_l VARCHAR2, estado_l VARCHAR2, tel INT,
     prontuario_l INT,data_nasc DATE, email_l VARCHAR2, codigo_cat INT, rg_l INT,
@@ -101,12 +102,12 @@ BEGIN
     OPEN cursor_leitor;
     
     FETCH cursor_rg INTO rg_aux;
-    IF SQL%NOTFOUND THEN
+    IF cursor_rg%NOTFOUND THEN
         INSERT INTO rg (id_rg,numero,estado) 
         VALUES(seq_rg.nextval,rg_l, estado_rg);
         
         FETCH cursor_leitor INTO leitor_aux ;
-        IF SQL%NOTFOUND THEN
+        IF cursor_leitor%NOTFOUND THEN
             INSERT INTO leitor(id_leitor,nome,cidade,estado,telefone,prontuario,data_nascimento,
             email,id_rg,codigo_categoria) 
             VALUES (seq_leitor.nextval,nome_l,cidade_l,estado_l,tel,prontuario_l,data_nasc,email_l,seq_rg.currval,codigo_cat);
@@ -124,5 +125,4 @@ BEGIN
     
     COMMIT;
 END;
-/
-SELECT * FROM RG;
+
