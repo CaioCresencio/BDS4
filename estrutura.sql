@@ -112,6 +112,7 @@ maxvalue 9999;
 CREATE TABLE reserva (
     codigo_reserva INT PRIMARY KEY,
     data_reserva DATE NOT NULL,
+    status VARCHAR2(30) DEFAULT 'EM ABERTO',
     codigo_exemplar INT NOT NULL,
     prontuario_func INT NOT NULL,
     id_leitor INT NOT NULL,

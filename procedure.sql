@@ -60,7 +60,7 @@ END;
 -- Cadastro de leitor 
 
 BEGIN 
-    cadastro_leitor('caio','teste','sp',333,10252,'26-05-1858','canelada',2,23225,'AT');
+    cadastro_leitor('caio','teste','sp',33,1111,'26-05-1858','canelada',2,1111,'AT');
 END;
 /
 
@@ -81,8 +81,8 @@ IS
     SELECT prontuario FROM leitor
     WHERE prontuario = prontuario_l;
 
-   
-    
+    rg_aux cursor_rg%ROWTYPE;
+    leitor_aux cursor_leitor%ROWTYPE;
     erro_leitor EXCEPTION;
     
 BEGIN
@@ -90,11 +90,11 @@ BEGIN
     OPEN cursor_rg;
     OPEN cursor_leitor;
     
-    
+    FETCH cursor_rg INTO rg_aux;
     IF cursor_rg%NOTFOUND THEN
         INSERT INTO rg (id_rg,numero,estado) 
         VALUES(seq_rg.nextval,rg_l, estado_rg);
-        
+        FETCH cursor_leitor INTO leitor_aux;
         IF cursor_leitor%NOTFOUND THEN
             INSERT INTO leitor(id_leitor,nome,cidade,estado,telefone,prontuario,data_nascimento,
             email,id_rg,codigo_categoria) 
