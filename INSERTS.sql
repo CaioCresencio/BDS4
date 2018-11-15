@@ -4,24 +4,24 @@
 DELETE FROM categoria_literaria;
 
 INSERT INTO categoria_literaria 
-(codigo_categoria,descricao,tempo_emprestimo)
-VALUES(seq_catLiteraria.nextval,'Livro',7);
+(codigo_categoria,descricao)
+VALUES(seq_catLiteraria.nextval,'Livro');
 
 INSERT INTO categoria_literaria 
-(codigo_categoria,descricao,tempo_emprestimo)
-VALUES(seq_catLiteraria.nextval,'Revista',5);
+(codigo_categoria,descricao)
+VALUES(seq_catLiteraria.nextval,'Revista');
 
 INSERT INTO categoria_literaria 
-(codigo_categoria,descricao,tempo_emprestimo)
-VALUES(seq_catLiteraria.nextval,'Jornal',10);
+(codigo_categoria,descricao)
+VALUES(seq_catLiteraria.nextval,'Jornal');
 
 INSERT INTO categoria_literaria 
-(codigo_categoria,descricao,tempo_emprestimo)
-VALUES(seq_catLiteraria.nextval,'Relatório técnico',4);
+(codigo_categoria,descricao)
+VALUES(seq_catLiteraria.nextval,'Relatório técnico');
 
 INSERT INTO categoria_literaria 
-(codigo_categoria,descricao,tempo_emprestimo)
-VALUES(seq_catLiteraria.nextval,'Trabalho acadêmico',2);
+(codigo_categoria,descricao)
+VALUES(seq_catLiteraria.nextval,'Trabalho acadêmico');
 
 SELECT * FROM categoria_literaria;
 -- OBRA

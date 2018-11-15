@@ -20,8 +20,7 @@ maxvalue 9999;
 
 CREATE TABLE categoria_literaria(
     codigo_categoria INT PRIMARY KEY ,
-    descricao VARCHAR2(70) NOT NULL,
-    tempo_emprestimo INT NOT NULL 
+    descricao VARCHAR2(70) NOT NULL 
 );    
 
 CREATE SEQUENCE seq_obraLiteraria
