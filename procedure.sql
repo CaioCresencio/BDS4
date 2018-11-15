@@ -6,9 +6,11 @@ CREATE OR REPLACE PROCEDURE cadastra_categoria_leitor(
 
 IS 
 BEGIN
+    COMMIT;
 	INSERT INTO categoria_leitor(codigo_categoria,descricao,tempo_emprestimo)
 	VALUES  (seq_categoriaLeitor.nextval,descric,temp_emprestimo);
     DBMS_OUTPUT.PUT_LINE('Categoria de leitor Cadastrada com sucesso!');
+    COMMIT;
 END;
 /
 
@@ -19,9 +21,11 @@ CREATE OR REPLACE PROCEDURE cadastra_categoria_literaria(
 )
 IS
 BEGIN
+    COMMIT;
 	INSERT INTO categoria_literaria (codigo_categoria,descricao,tempo_emprestimo)
 	VALUES  (seq_catLiteraria.nextval,descric,temp_emprestimo);
     DBMS_OUTPUT.PUT_LINE('Categoria literaria Cadastrada com sucesso!');
+    COMMIT;
 END;
 /
 
@@ -34,11 +38,10 @@ IS
     CURSOR cursor_func IS
     SELECT prontuario_func FROM funcionario
     WHERE prontuario_func = prontuario_f;
-    func cursor_func%ROWTYPE;
+    
 BEGIN
     COMMIT;
     OPEN cursor_func;
-        FETCH cursor_func INTO func;
         IF SQL%NOTFOUND THEN
             INSERT INTO funcionario (prontuario_func,endereco,data_nascimento,telefone,nome)
             VALUES (prontuario_f,ende,data_nasc,tel,nome_func);
@@ -53,18 +56,6 @@ END;
 /
 
 
--- Cadastro de obra
-
-CREATE OR REPLACE PROCEDURE cadastrar_obra(
-    isbn_obra VARCHAR2,qtd_exem INT, nrm_edi INT, data_public DATE,
-    edit VARCHAR2, tit_obra VARCHAR2, cod_categoria INT
-)
-IS
-
-BEGIN
-    DMBS_OUTPUT.PUT_LINE('TESTE');
-END;
-/     
 
 -- Cadastro de leitor 
 
@@ -90,9 +81,7 @@ IS
     SELECT prontuario FROM leitor
     WHERE prontuario = prontuario_l;
 
-    rg_aux cursor_rg%ROWTYPE;
-
-    leitor_aux cursor_leitor%ROWTYPE;
+   
     
     erro_leitor EXCEPTION;
     
@@ -101,12 +90,11 @@ BEGIN
     OPEN cursor_rg;
     OPEN cursor_leitor;
     
-    FETCH cursor_rg INTO rg_aux;
+    
     IF cursor_rg%NOTFOUND THEN
         INSERT INTO rg (id_rg,numero,estado) 
         VALUES(seq_rg.nextval,rg_l, estado_rg);
         
-        FETCH cursor_leitor INTO leitor_aux ;
         IF cursor_leitor%NOTFOUND THEN
             INSERT INTO leitor(id_leitor,nome,cidade,estado,telefone,prontuario,data_nascimento,
             email,id_rg,codigo_categoria) 
@@ -125,4 +113,6 @@ BEGIN
     
     COMMIT;
 END;
+
+
 

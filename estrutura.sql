@@ -75,6 +75,7 @@ CREATE TABLE leitor(
     prontuario INT NOT NULL,
     data_nascimento DATE NOT NULL,
     email VARCHAR2(40) NOT NULL,
+    status VARCHAR(30) DEFAULT 'LIBERADO',
     id_rg NOT NULL,
     codigo_categoria INT NOT NULL,
     FOREIGN KEY (codigo_categoria) REFERENCES categoria_leitor(codigo_categoria) ON DELETE CASCADE,
@@ -89,7 +90,7 @@ maxvalue 9999;
 
 CREATE TABLE exemplar(
     codigo_exemplar INT PRIMARY KEY,
-    status varchar2(10) NOT NULL,
+    status varchar2(20) DEFAULT 'DISPONIVEL',
     id_obra INT NOT NULL,
     FOREIGN KEY (id_obra) REFERENCES obra_literaria (id_obra)
 );
