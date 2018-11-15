@@ -1,3 +1,10 @@
+    
+CREATE SEQUENCE seq_func
+nocycle
+start with 1
+increment by 1
+maxvalue 9999;
+
 CREATE TABLE funcionario (
     prontuario_func INT PRIMARY KEY,
     endereco VARCHAR2(70) NOT NULL,

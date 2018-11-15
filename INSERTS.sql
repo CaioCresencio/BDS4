@@ -1,3 +1,15 @@
+-- Esta aqui por fins de automatização :P
+
+CREATE OR REPLACE TRIGGER cadastra_exemplar
+    AFTER INSERT ON obra_literaria FOR EACH ROW
+BEGIN
+    FOR i IN 1..:NEW.qtd_exemplares LOOP
+        INSERT INTO exemplar VALUES(seq_exemplar.nextval, 'DISPONIVEL', :NEW.id_obra);
+    END LOOP;
+END;
+/
+
+
 -- CATEGORIA LITERARIA
 
 DELETE FROM categoria_literaria;
@@ -102,3 +114,25 @@ VALUES (seq_leitor.nextval,'Frodinho','São Carlos','SP',121256,1710125,'10-02-1
 INSERT INTO leitor(id_leitor,nome,cidade,estado,telefone,prontuario,data_nascimento,email,status,id_rg,codigo_categoria)
 VALUES (seq_leitor.nextval,'Diego','São Carlos','SP',42216,1710324,'05-02-1989','diego@gmail.com','DISPONIVEL',3,2);
 SELECT * FROM leitor;
+
+
+-- Funcionario 
+
+
+INSERT INTO funcionario(prontuario_func,endereco,data_nascimento,telefone,nome)
+VALUES (seq_func.nextval,'Paschoal de melo', '25-03-1987',12585,'Rupertson');
+
+INSERT INTO funcionario(prontuario_func,endereco,data_nascimento,telefone,nome)
+VALUES (seq_func.nextval,'Avenida dom pedro I', '15-05-1887',0000,'Lucas');
+
+
+INSERT INTO funcionario(prontuario_func,endereco,data_nascimento,telefone,nome)
+VALUES (seq_func.nextval,'Paschoal de melo 3', '22-01-1287',14445,'Geosvaldo');
+
+
+INSERT INTO funcionario(prontuario_func,endereco,data_nascimento,telefone,nome)
+VALUES (seq_func.nextval,'Paschoal de melo 2', '05-02-1687',12585,'Aclanildo');
+
+
+INSERT INTO funcionario(prontuario_func,endereco,data_nascimento,telefone,nome)
+VALUES (seq_func.nextval,'Esquina de frente', '06-06-1666',4444,'Mestre dos magos');
