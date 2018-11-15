@@ -98,6 +98,7 @@ maxvalue 9999;
 CREATE TABLE exemplar(
     codigo_exemplar INT PRIMARY KEY,
     status varchar2(20) DEFAULT 'DISPONIVEL',
+    numero_exemplar INT NOT NULL,
     id_obra INT NOT NULL,
     FOREIGN KEY (id_obra) REFERENCES obra_literaria (id_obra)
 );
@@ -185,4 +186,11 @@ CREATE TABLE emprestimo (
 
 
 
-
+CREATE OR REPLACE TRIGGER cadastra_exemplar
+    AFTER INSERT ON obra_literaria FOR EACH ROW
+BEGIN
+    FOR i IN 1..:NEW.qtd_exemplares LOOP
+        INSERT INTO exemplar VALUES(seq_exemplar.nextval, 'DISPONIVEL',i, :NEW.id_obra);
+    END LOOP;
+END;
+/
