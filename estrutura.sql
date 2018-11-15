@@ -177,6 +177,7 @@ CREATE TABLE emprestimo (
     codigo_emp INT PRIMARY KEY,
     data_dev DATE NOT NULL,
     data_emp DATE DEFAULT SYSDATE,
+    status VARCHAR2(30) NOT NULL,
     codigo_exemplar INT NOT NULL,
     id_leitor INT NOT NULL,
     prontuario_func INT NOT NULL,
@@ -185,6 +186,22 @@ CREATE TABLE emprestimo (
     FOREIGN KEY (id_leitor) REFERENCES leitor(id_leitor)
 );
 
+CREATE SEQUENCE seq_dev
+nocycle
+start with 1
+increment by 1
+maxvalue 9999;
+
+CREATE TABLE devolucao (
+    id_devolucao INT PRIMARY KEY,
+    data_dev DATE NOT NULL,
+    codigo_exemplar INT NOT NULL,
+    id_leitor INT NOT NULL,
+    prontuario_func INT NOT NULL,
+    FOREIGN KEY (codigo_exemplar) REFERENCES exemplar(codigo_exemplar),
+    FOREIGN KEY (id_leitor) REFERENCES leitor(id_leitor),
+    FOREIGN KEY (prontuario_func) REFERENCES funcionario(prontuario_func)
+);
 
 
 CREATE OR REPLACE TRIGGER cadastra_exemplar
