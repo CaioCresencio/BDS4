@@ -75,7 +75,7 @@ CREATE TABLE leitor(
     prontuario INT NOT NULL,
     data_nascimento DATE NOT NULL,
     email VARCHAR2(40) NOT NULL,
-    status VARCHAR(30) DEFAULT 'LIBERADO',
+    status VARCHAR(30) DEFAULT 'DISPONIVEL',
     id_rg NOT NULL,
     codigo_categoria INT NOT NULL,
     FOREIGN KEY (codigo_categoria) REFERENCES categoria_leitor(codigo_categoria) ON DELETE CASCADE,

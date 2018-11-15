@@ -93,12 +93,12 @@ INSERT INTO rg (id_rg,numero,estado) VALUES(seq_rg.nextval,3456,'SP');
 
 -- Leitor
 
-INSERT INTO leitor(id_leitor,nome,cidade,estado,telefone,prontuario,data_nascimento,email,id_rg,codigo_categoria)
-VALUES (seq_leitor.nextval,'Caio','São Carlos','SP',123456,1710052,'29-06-1998','caio@gmail.com',1,2);
+INSERT INTO leitor(id_leitor,nome,cidade,estado,telefone,prontuario,data_nascimento,email,status,id_rg,codigo_categoria)
+VALUES (seq_leitor.nextval,'Caio','São Carlos','SP',123456,1710052,'29-06-1998','caio@gmail.com','DISPONIVEL',1,2);
 
-INSERT INTO leitor(id_leitor,nome,cidade,estado,telefone,prontuario,data_nascimento,email,id_rg,codigo_categoria)
-VALUES (seq_leitor.nextval,'Frodinho','São Carlos','SP',121256,1710125,'10-02-1999','frodinho@gmail.com',2,2);
+INSERT INTO leitor(id_leitor,nome,cidade,estado,telefone,prontuario,data_nascimento,email,status,id_rg,codigo_categoria)
+VALUES (seq_leitor.nextval,'Frodinho','São Carlos','SP',121256,1710125,'10-02-1999','frodinho@gmail.com','DISPONIVEL',2,2);
 
-INSERT INTO leitor(id_leitor,nome,cidade,estado,telefone,prontuario,data_nascimento,email,id_rg,codigo_categoria)
-VALUES (seq_leitor.nextval,'Diego','São Carlos','SP',42216,1710324,'05-02-1989','diego@gmail.com',3,2);
+INSERT INTO leitor(id_leitor,nome,cidade,estado,telefone,prontuario,data_nascimento,email,status,id_rg,codigo_categoria)
+VALUES (seq_leitor.nextval,'Diego','São Carlos','SP',42216,1710324,'05-02-1989','diego@gmail.com','DISPONIVEL',3,2);
 SELECT * FROM leitor;
