@@ -31,6 +31,7 @@ IS
     funcionario_erro EXCEPTION;
     reservado_por_outro EXCEPTION;
     exemplar_emprestado EXCEPTION;
+    limite_emp EXCEPTION;
     
     retorno_exm varchar2(30);
     datadev date;
@@ -45,6 +46,8 @@ BEGIN
         RAISE leitor_erro;
     ELSIF aux_leitor.status = 'Bloqueado' THEN
         RAISE leitor_bloaqueado;
+    ELSIF limite_emprestimo(aux_leitor.id_leitor) >= 3 THEN
+        RAISE limite_emp;
     END IF;
     
     retorno_exm := status_exemplar(cod_exemplar);
@@ -85,6 +88,8 @@ EXCEPTION
         DBMS_OUTPUT.PUT_LINE('Nenhum leitor encontrado com o prontuario: '|| prontuario_leitor);
     WHEN leitor_bloaqueado THEN
         DBMS_OUTPUT.PUT_LINE('Leitor esta bloqueado!');
+    WHEN limite_emp THEN
+        DBMS_OUTPUT.PUT_LINE('Leitor já possui o limite de exemplares emprestado!');
     WHEN exemplar_erro THEN
         DBMS_OUTPUT.PUT_LINE('Nenhum exemplar foi encontrado. Condigo invalido');
     WHEN exemplar_emprestado THEN
@@ -95,7 +100,25 @@ EXCEPTION
         DBMS_OUTPUT.PUT_LINE('Exemplar reservado por outro leitor!');
 END;
 /
-        
+
+CREATE OR REPLACE FUNCTION limite_emprestimo(
+    leitor_id INT
+)
+RETURN INT
+IS
+    retorno INT;
+BEGIN
+
+    SELECT count(*) INTO retorno
+    FROM emprestimo
+    WHERE id_leitor = leitor_id
+    AND status = 'EM ANDAMENTO';
+
+    RETURN retorno;
+END;
+/
+
+
 CREATE OR REPLACE FUNCTION status_exemplar(
     cod_exemplar INT
 )
@@ -134,7 +157,7 @@ BEGIN
 END;
 /
 BEGIN
-    emprestimo_procedure(1710052, 1, 5);
+    BIBLIOTECA_ADMIN.emprestimo_procedure(1710052, 1, 6);
 END;
 /
 
