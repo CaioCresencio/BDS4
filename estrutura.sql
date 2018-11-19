@@ -194,9 +194,11 @@ maxvalue 9999;
 CREATE TABLE devolucao (
     id_devolucao INT PRIMARY KEY,
     data_dev DATE NOT NULL,
+    codigo_emp INT NOT NULL,
     codigo_exemplar INT NOT NULL,
     id_leitor INT NOT NULL,
     prontuario_func INT NOT NULL,
+    FOREIGN KEY (codigo_emp) REFERENCES emprestimo(codigo_emp),
     FOREIGN KEY (codigo_exemplar) REFERENCES exemplar(codigo_exemplar),
     FOREIGN KEY (id_leitor) REFERENCES leitor(id_leitor),
     FOREIGN KEY (prontuario_func) REFERENCES funcionario(prontuario_func)
