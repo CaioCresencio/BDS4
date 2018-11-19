@@ -212,6 +212,7 @@ CREATE OR REPLACE PACKAGE BODY biblioteca_admin AS
     )
     IS  
         exception_emprestimo EXCEPTION;
+        
         codigo INT;
         data_e DATE;
         
@@ -219,11 +220,12 @@ CREATE OR REPLACE PACKAGE BODY biblioteca_admin AS
         SELECT codigo_emp, status
         FROM emprestimo 
         WHERE  id_leitor =  id_l
-        AND status = 'EM ABERTO';
+        AND status = 'EM ANDAMENTO';
         
         emp_aux cursor_emp%ROWTYPE;
         
         emprestimos_faltando INT;
+        
     BEGIN
         COMMIT;
         
@@ -232,13 +234,14 @@ CREATE OR REPLACE PACKAGE BODY biblioteca_admin AS
         SELECT codigo_emp INTO codigo
         FROM emprestimo     
         WHERE codigo_exemplar = codigo_ex
-        AND status = 'EM ABERTO'; 
+        AND status = 'EM ANDAMENTO'; 
+        
         
         SELECT data_emp  INTO data_e
         FROM emprestimo WHERE codigo_exemplar = codigo_ex;
         
           
-        INSERT INTO devolucao VALUES(seq_dev.nextval,data_d,codigo_ex,id_l,prontuario_f);
+        INSERT INTO devolucao VALUES(seq_dev.nextval,data_d,codigo,codigo_ex,id_l,prontuario_f);
         UPDATE exemplar SET status = 'DISPONIVEL' WHERE codigo_exemplar = codigo_ex;
         UPDATE emprestimo SET status = 'FECHADO' WHERE codigo_exemplar = codigo_ex;
         
@@ -365,11 +368,11 @@ CREATE OR REPLACE PACKAGE BODY biblioteca_admin AS
         WHEN leitor_bloaqueado THEN
             DBMS_OUTPUT.PUT_LINE('Leitor esta bloqueado!');
         WHEN limite_emp THEN
-            DBMS_OUTPUT.PUT_LINE('Leitor já possui o limite de exemplares emprestado!');
+            DBMS_OUTPUT.PUT_LINE('Leitor jï¿½ possui o limite de exemplares emprestado!');
         WHEN exemplar_erro THEN
             DBMS_OUTPUT.PUT_LINE('Nenhum exemplar foi encontrado. Condigo invalido');
         WHEN exemplar_emprestado THEN
-            DBMS_OUTPUT.PUT_LINE('Exemplar já esta emprestado! Tente outro exemplar.');
+            DBMS_OUTPUT.PUT_LINE('Exemplar jï¿½ esta emprestado! Tente outro exemplar.');
         WHEN funcionario_erro THEN
             DBMS_OUTPUT.PUT_LINE('Nenhum funcionario encontrado com o prontuario: '|| prontuario_funcionario);
         WHEN reservado_por_outro THEN
@@ -386,14 +389,18 @@ DECLARE
 
  teste VARCHAR2(30);
 BEGIN 
-    biblioteca_admin.registrar_reserva(1,1710052 ,1);
+    biblioteca_admin.registrar_reserva(1,1710125 ,1);
 END;
 /
 BEGIN
-    biblioteca_admin.gera_devolucao(2,'22-11-2018',1,1);
+    biblioteca_admin.gera_devolucao(1,'22-11-2018',1,1);
 END;
 /
-SELECT * FROM RESERVA;
-SELECT * FROM leitor;
-SELECT * FROM emprestimo;
-INSERT INTO emprestimo VALUES(6,'20-11-2018','19-11-2018','EM ABERTO',2,1,1);
+
+BEGIN
+    biblioteca_admin.emprestimo_procedure(1710052,1,1);
+END;
+/
+
+
+
