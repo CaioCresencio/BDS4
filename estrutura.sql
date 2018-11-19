@@ -74,8 +74,9 @@ maxvalue 9999;
 
 CREATE TABLE leitor(
     id_leitor INT PRIMARY KEY,
-    nome VARCHAR2(100) NOT NULL,
-    cidade VARCHAR2(100) NOT NULL,
+    nome VARCHAR2(30) NOT NULL,
+    endereco VARCHAR2(50) NOT NULL,
+    cidade VARCHAR2(30) NOT NULL,
     estado VARCHAR2(5) NOT NULL,
     telefone INT NOT NULL,
     prontuario INT NOT NULL,
