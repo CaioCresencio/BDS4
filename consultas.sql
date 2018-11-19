@@ -53,17 +53,26 @@ WHERE nome = 'Caio'
 
 --13 
 
-SELECT o.titulo_obra, COUNT(codigo_exemplar)
+SELECT o.titulo_obra, COUNT(e.status ) AS emprestado, COUNT(r.status) AS reservado, COUNT(e1.status) AS total
 FROM obra_literaria o
 JOIN exemplar e1
 USING(id_obra)
-JOIN emprestimo e
+LEFT JOIN emprestimo e
+USING (codigo_exemplar)
+LEFT JOIN reserva r
 USING (codigo_exemplar)
 WHERE e.status = 'EM ANDAMENTO'
 GROUP BY (o.titulo_obra)
 HAVING o.titulo_obra = 'Java como Programar'
+
 ;
 
+SELECT o.titulo_obra, COUNT(codigo_exemplar) 
+FROM obra_literaria o 
+JOIN exemplar e
+USING (id_obra)
+JOIN emprestimo e1
+USING (codigo_exemplar);
 
 select * from obra_literaria;
 select * from exemplar;
