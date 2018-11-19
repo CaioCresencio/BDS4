@@ -12,8 +12,6 @@ JOIN leitor l
 USING (id_leitor)
 WHERE e.status = 'EM ANDAMENTO';
 
-SELECT * FROM obras_emprestadas;
-
 --10
 SELECT l.nome, l.telefone,l.email, e.data_emp, e.data_dev
 FROM emprestimo e
@@ -52,28 +50,48 @@ WHERE nome = 'Caio'
 ;
 
 --13 
+SET SERVEROUTPUT ON;
+DECLARE
+    nome VARCHAR2(30);
+    emprestados INT;
+    total INT;
+    reservado INT;
+    disponivel INT;
+BEGIN
+    
+    nome := 'Java como Programar';
+    
+    SELECT COUNT(e.status) INTO emprestados
+    FROM obra_literaria o
+    JOIN exemplar e1
+    USING(id_obra)
+    LEFT JOIN emprestimo e
+    USING (codigo_exemplar)
+    WHERE e.status = 'EM ANDAMENTO'
+    GROUP BY (o.titulo_obra)
+    HAVING o.titulo_obra = nome;
+    
+    SELECT COUNT(e.status) INTO total
+    FROM obra_literaria o
+    JOIN exemplar e
+    USING(id_obra)
+    GROUP BY (o.titulo_obra)
+    HAVING o.titulo_obra = nome;
+    
+    SELECT COUNT(r.status) INTO reservado
+    FROM obra_literaria o
+    JOIN exemplar e
+    USING(id_obra)
+    JOIN reserva r
+    USING (codigo_exemplar)
+    GROUP BY (o.titulo_obra)
+    HAVING o.titulo_obra = nome;
+    
+    disponivel := total - reservado - emprestados;    
+    
+    DBMS_OUTPUT.PUT_LINE('Obra: ' || nome ||' Total disponivel: ' || disponivel || ' Reservados: '
+    || reservado ||' Emprestados: ' || emprestados ||' Total de exemplares: ' || total);
+    
+END;
+/
 
-SELECT o.titulo_obra, COUNT(e.status ) AS emprestado, COUNT(r.status) AS reservado, COUNT(e1.status) AS total
-FROM obra_literaria o
-JOIN exemplar e1
-USING(id_obra)
-LEFT JOIN emprestimo e
-USING (codigo_exemplar)
-LEFT JOIN reserva r
-USING (codigo_exemplar)
-WHERE e.status = 'EM ANDAMENTO'
-GROUP BY (o.titulo_obra)
-HAVING o.titulo_obra = 'Java como Programar'
-
-;
-
-SELECT o.titulo_obra, COUNT(codigo_exemplar) 
-FROM obra_literaria o 
-JOIN exemplar e
-USING (id_obra)
-JOIN emprestimo e1
-USING (codigo_exemplar);
-
-select * from obra_literaria;
-select * from exemplar;
-SELECT * FROM emprestimo;

@@ -389,7 +389,7 @@ DECLARE
 
  teste VARCHAR2(30);
 BEGIN 
-    biblioteca_admin.registrar_reserva(1,1710052 ,1);
+    biblioteca_admin.registrar_reserva(1,1710125 ,1);
 END;
 /
 BEGIN
@@ -401,14 +401,6 @@ BEGIN
     biblioteca_admin.emprestimo_procedure(1710052,1,1);
 END;
 /
-SELECT * FROM RESERVA;
-SELECT * FROM leitor;
-SELECT * FROM Devolucao;
-SELECT * FROM emprestimo;
-DELETE  FROM EMPRESTIMO where codigo_emp = 2;
-INSERT INTO emprestimo VALUES(seq_emprestimo.nextval,'19-11-2018','19-11-2018','EM ANDAMENTO',5,1,1);
-
-
 
 
 
