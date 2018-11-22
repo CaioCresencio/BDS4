@@ -269,8 +269,10 @@ CREATE OR REPLACE PACKAGE BODY biblioteca_admin AS
         EXCEPTION 
         
             WHEN NO_DATA_FOUND THEN
+                ROLLBACK;
                 DBMS_OUTPUT.PUT_LINE('Emprestimo não existe');
             WHEN others THEN
+                ROLLBACK;
                 DBMS_OUTPUT.PUT_LINE(SQLCODE);
                 DBMS_OUTPUT.PUT_LINE(SQLERRM);
     END gera_devolucao;
@@ -364,18 +366,25 @@ CREATE OR REPLACE PACKAGE BODY biblioteca_admin AS
     
     EXCEPTION
         WHEN leitor_erro THEN
+            ROLLBACK; 
             DBMS_OUTPUT.PUT_LINE('Nenhum leitor encontrado com o prontuario: '|| prontuario_leitor);
         WHEN leitor_bloaqueado THEN
+            ROLLBACK;
             DBMS_OUTPUT.PUT_LINE('Leitor esta bloqueado!');
         WHEN limite_emp THEN
+            ROLLBACK;
             DBMS_OUTPUT.PUT_LINE('Leitor j� possui o limite de exemplares emprestado!');
         WHEN exemplar_erro THEN
+            ROLLBACK;
             DBMS_OUTPUT.PUT_LINE('Nenhum exemplar foi encontrado. Condigo invalido');
         WHEN exemplar_emprestado THEN
+            ROLLBACK;
             DBMS_OUTPUT.PUT_LINE('Exemplar j� esta emprestado! Tente outro exemplar.');
         WHEN funcionario_erro THEN
+            ROLLBACK;
             DBMS_OUTPUT.PUT_LINE('Nenhum funcionario encontrado com o prontuario: '|| prontuario_funcionario);
         WHEN reservado_por_outro THEN
+            ROLLBACK;
             DBMS_OUTPUT.PUT_LINE('Exemplar reservado por outro leitor!');
     END emprestimo_procedure;
     
@@ -383,24 +392,4 @@ CREATE OR REPLACE PACKAGE BODY biblioteca_admin AS
 END biblioteca_admin;
 /
 
-
-set serveroutput on;
-DECLARE 
-
- teste VARCHAR2(30);
-BEGIN 
-    biblioteca_admin.registrar_reserva(1,1710125 ,1);
-END;
-/
-BEGIN
-    biblioteca_admin.gera_devolucao(1,'22-11-2018',1,1);
-END;
-/
-
-BEGIN
-    biblioteca_admin.emprestimo_procedure(1710052,1,1);
-END;
-/
-
-
-
+SET SERVEROUTPUT ON;
