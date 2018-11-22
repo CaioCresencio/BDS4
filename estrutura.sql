@@ -113,10 +113,10 @@ CREATE TABLE reserva (
     codigo_reserva INT PRIMARY KEY,
     data_reserva DATE NOT NULL,
     status VARCHAR2(30) DEFAULT 'EM ABERTO',
-    codigo_exemplar INT NOT NULL,
+    id_obra INT NOT NULL,
     prontuario_func INT NOT NULL,
     id_leitor INT NOT NULL,
-    FOREIGN KEY (codigo_exemplar) REFERENCES exemplar(codigo_exemplar),
+    FOREIGN KEY (id_obra) REFERENCES  obra_literaria (id_obra),
     FOREIGN KEY (prontuario_func) REFERENCES funcionario(prontuario_func),
     FOREIGN KEY (id_leitor) REFERENCES leitor(id_leitor)
 ); 

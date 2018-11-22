@@ -137,25 +137,36 @@ CREATE OR REPLACE PACKAGE BODY biblioteca_admin AS
     )
     IS
         status_l VARCHAR2(30);
-        CURSOR cursor_exemplar IS
-        SELECT status, codigo_exemplar FROM obra_literaria
-        JOIN exemplar USING(id_obra)
-        WHERE id_obra = id_obra_l;
-    
-        aux_exemp cursor_exemplar%ROWTYPE;
+        
+        CURSOR cursor_leitor IS
+        SELECT id_leitor FROM leitor
+        WHERE prontuario = prontuario_l;
+        
+        CURSOR cursor_disponivel IS
+        SELECT id_obra, codigo_exemplar
+        FROM exemplar
+        WHERE id_obra = id_obra_l
+        AND status = 'DISPONIVEL';
+        
+        aux_disponivel cursor_disponivel%ROWTYPE;
+        
+        aux_leitor cursor_leitor%ROWTYPE;
+        
         exemplar_ref INT;
         idLeitor INT;
         existe_disponivel INT;
         exception_leitor EXCEPTION;
         exception_pLeitor EXCEPTION;
+        exception_disponivel EXCEPTION;
+        
     BEGIN
         COMMIT;
         exemplar_ref := 0;
         existe_disponivel := 0;
         
-        SELECT id_leitor INTO idLeitor
-        FROM leitor WHERE prontuario = prontuario_l;
-        IF SQL%NOTFOUND THEN
+        OPEN cursor_leitor;
+        FETCH cursor_leitor INTO aux_leitor;
+        IF cursor_leitor%NOTFOUND THEN
             RAISE exception_leitor;
         END IF;
         
@@ -164,33 +175,21 @@ CREATE OR REPLACE PACKAGE BODY biblioteca_admin AS
         IF status_l = 'BLOQUEADO' THEN
             RAISE exception_pLeitor;
         END IF;
+        CLOSE cursor_leitor;
         
-        OPEN cursor_exemplar;
-            LOOP
-                FETCH cursor_exemplar INTO aux_exemp;
-                EXIT WHEN cursor_exemplar%NOTFOUND;
-                
-                exemplar_ref := aux_exemp.codigo_exemplar;
-                
-                IF aux_exemp.status = 'DISPONIVEL' THEN    
-                    existe_disponivel := 1;
-                    EXIT;
-                END IF;
-               
-            END LOOP;
-            
-            IF existe_disponivel = 1 THEN
-                DBMS_OUTPUT.PUT_LINE('Ainda possui exemplares disponiveis! Você tem até 3 dias uteis para emprestalo!');
-                INSERT INTO reserva VALUES(seq_reserva.nextval,SYSDATE,'EM ABERTO',exemplar_ref,prontuario_func_l,idLeitor);
-                UPDATE exemplar SET status = 'RESERVADO' WHERE codigo_exemplar = exemplar_ref;
-            ELSE
-                INSERT INTO reserva VALUES(seq_reserva.nextval,SYSDATE,'EM ABERTO',exemplar_ref,prontuario_func_l,idLeitor);
-                UPDATE exemplar SET status = 'RESERVADO' WHERE codigo_exemplar = exemplar_ref;
-                DBMS_OUTPUT.PUT_LINE('Reserva efetuada com sucesso!');
-            END IF;
+        OPEN cursor_disponivel;
+        FETCH cursor_disponivel INTO aux_disponivel;
+        
+        IF cursor_disponivel%FOUND THEN
+            RAISE exception_disponivel;
+        ELSE
+            INSERT INTO reserva VALUES(seq_reserva.nextval,SYSDATE,'EM ABERTO',exemplar_ref,id_obra_l,prontuario_func_l,aux_leitor.id_leitor);
+            DBMS_OUTPUT.PUT_LINE('Reserva efetuada com sucesso!');
+        END IF;
             
         COMMIT;
-        CLOSE cursor_exemplar;
+       
+        CLOSE cursor_disponivel;
         
             
         EXCEPTION 
@@ -200,12 +199,14 @@ CREATE OR REPLACE PACKAGE BODY biblioteca_admin AS
             WHEN exception_pLeitor THEN
                 ROLLBACK;
                 DBMS_OUTPUT.PUT_LINE('Leitor bloqueado');
+            WHEN exception_disponivel THEN
+                DBMS_OUTPUT.PUT_LINE('Ainda possui exemplares disponiveis!');
+                ROLLBACK;
             WHEN OTHERS THEN
                 ROLLBACK;
                 DBMS_OUTPUT.PUT_LINE(SQLCODE);
                 DBMS_OUTPUT.PUT_LINE(SQLERRM);
     END registrar_reserva;
-        
  ----------- DEVOLUÇÃO
     PROCEDURE gera_devolucao(
        codigo_ex INT, data_d DATE, id_l INT, prontuario_f INT    
@@ -221,6 +222,14 @@ CREATE OR REPLACE PACKAGE BODY biblioteca_admin AS
         FROM emprestimo 
         WHERE  id_leitor =  id_l
         AND status = 'EM ANDAMENTO';
+        
+--        
+--        CURSOR cursor_res IS
+--        SELECT id_leitor,codigo_exemplar 
+--        FROM reserva
+--        WHERE codigo_exemplar = codigo_ex
+--        AND data_reserva = MIN(data_reserva); 
+    
         
         emp_aux cursor_emp%ROWTYPE;
         
@@ -325,7 +334,7 @@ CREATE OR REPLACE PACKAGE BODY biblioteca_admin AS
         
         IF cursor_leitor%NOTFOUND THEN
             RAISE leitor_erro;
-        ELSIF aux_leitor.status = 'Bloqueado' THEN
+        ELSIF aux_leitor.status = 'BLOQUEADO' THEN
             RAISE leitor_bloaqueado;
         ELSIF limite_emprestimo(aux_leitor.id_leitor) >= 3 THEN
             RAISE limite_emp;
@@ -393,3 +402,25 @@ END biblioteca_admin;
 /
 
 SET SERVEROUTPUT ON;
+
+
+select * from emprestimo;
+select * from reserva;
+BEGIN 
+    biblioteca_admin.emprestimo_procedure(1710125,1,5);
+    
+END;
+/
+    
+BEGIN 
+    biblioteca_admin.registrar_reserva(1,1710052,1);
+    
+END;
+/
+
+select * from reserva;
+
+  SELECT id_leitor,codigo_exemplar 
+        FROM reserva
+        WHERE codigo_exemplar = 2
+        AND data_reserva = MIN(data_reserva);

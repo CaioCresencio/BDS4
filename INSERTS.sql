@@ -79,7 +79,7 @@ INSERT INTO categoria_leitor (codigo_categoria,descricao,tempo_emprestimo)
 VALUES (seq_categoriaLeitor.nextval,'Aluno de graduação',15);
 
 INSERT INTO categoria_leitor (codigo_categoria,descricao,tempo_emprestimo)
-VALUES (seq_categoriaLeitor.nextval,'Aluno de p�s graduação',30);
+VALUES (seq_categoriaLeitor.nextval,'Aluno de p�s graduação',30);
 
 INSERT INTO categoria_leitor (codigo_categoria,descricao,tempo_emprestimo)
 VALUES (seq_categoriaLeitor.nextval,'Professor',30);

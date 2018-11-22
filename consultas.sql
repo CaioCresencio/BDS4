@@ -22,7 +22,6 @@ AND data_dev < SYSDATE;
  
 --11
 
-
 SELECT l.nome, l.telefone, l.email, o.titulo_obra
 FROM reserva r
 JOIN exemplar 
