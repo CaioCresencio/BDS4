@@ -68,7 +68,6 @@ CREATE OR REPLACE PACKAGE BODY biblioteca_admin AS
                 DBMS_OUTPUT.PUT_LINE(SQLERRM);
                 RETURN 'INVALIDO'; 
     END status_exemplar;
-    
 
 
 -------------- STATUS LEITOR
@@ -152,20 +151,17 @@ CREATE OR REPLACE PACKAGE BODY biblioteca_admin AS
         
         aux_leitor cursor_leitor%ROWTYPE;
         
-        exemplar_ref INT;
         idLeitor INT;
-        existe_disponivel INT;
         exception_leitor EXCEPTION;
         exception_pLeitor EXCEPTION;
         exception_disponivel EXCEPTION;
         
     BEGIN
         COMMIT;
-        exemplar_ref := 0;
-        existe_disponivel := 0;
         
         OPEN cursor_leitor;
         FETCH cursor_leitor INTO aux_leitor;
+        
         IF cursor_leitor%NOTFOUND THEN
             RAISE exception_leitor;
         END IF;
@@ -183,14 +179,13 @@ CREATE OR REPLACE PACKAGE BODY biblioteca_admin AS
         IF cursor_disponivel%FOUND THEN
             RAISE exception_disponivel;
         ELSE
-            INSERT INTO reserva VALUES(seq_reserva.nextval,SYSDATE,'EM ABERTO',exemplar_ref,id_obra_l,prontuario_func_l,aux_leitor.id_leitor);
+            INSERT INTO reserva VALUES(seq_reserva.nextval,SYSDATE,'EM ABERTO',id_obra_l,prontuario_func_l,aux_leitor.id_leitor);
             DBMS_OUTPUT.PUT_LINE('Reserva efetuada com sucesso!');
         END IF;
             
         COMMIT;
        
         CLOSE cursor_disponivel;
-        
             
         EXCEPTION 
             WHEN exception_leitor THEN
@@ -207,6 +202,8 @@ CREATE OR REPLACE PACKAGE BODY biblioteca_admin AS
                 DBMS_OUTPUT.PUT_LINE(SQLCODE);
                 DBMS_OUTPUT.PUT_LINE(SQLERRM);
     END registrar_reserva;
+    
+    
  ----------- DEVOLU√á√ÉO
     PROCEDURE gera_devolucao(
        codigo_ex INT, data_d DATE, id_l INT, prontuario_f INT    
@@ -214,69 +211,78 @@ CREATE OR REPLACE PACKAGE BODY biblioteca_admin AS
     IS  
         exception_emprestimo EXCEPTION;
         
-        codigo INT;
-        data_e DATE;
-        
         CURSOR cursor_emp IS
-        SELECT codigo_emp, status
+        SELECT codigo_emp, status, data_dev
         FROM emprestimo 
-        WHERE  id_leitor =  id_l
+        WHERE  codigo_exemplar =  codigo_ex
+        AND id_leitor = id_l
         AND status = 'EM ANDAMENTO';
         
---        
---        CURSOR cursor_res IS
---        SELECT id_leitor,codigo_exemplar 
---        FROM reserva
---        WHERE codigo_exemplar = codigo_ex
---        AND data_reserva = MIN(data_reserva); 
-    
-        
+        CURSOR cursor_reserva IS
+        SELECT codigo_reserva, id_leitor
+        FROM reserva
+        WHERE id_obra = (SELECT id_obra
+                         FROM exemplar
+                         WHERE codigo_exemplar = codigo_ex)
+        AND data_reserva = (SELECT MIN(data_reserva)
+                            FROM reserva
+                            WHERE id_obra = 1)
+        AND status = 'EM ABERTO';
+
         emp_aux cursor_emp%ROWTYPE;
+        res_aux cursor_reserva%ROWTYPE;
         
-        emprestimos_faltando INT;
+        pront_leitor INT;
         
     BEGIN
-        COMMIT;
-        
-        emprestimos_faltando := 0;
-        
-        SELECT codigo_emp INTO codigo
-        FROM emprestimo     
-        WHERE codigo_exemplar = codigo_ex
-        AND status = 'EM ANDAMENTO'; 
-        
-        
-        SELECT data_emp  INTO data_e
-        FROM emprestimo WHERE codigo_exemplar = codigo_ex;
-        
-          
-        INSERT INTO devolucao VALUES(seq_dev.nextval,data_d,codigo,codigo_ex,id_l,prontuario_f);
-        UPDATE exemplar SET status = 'DISPONIVEL' WHERE codigo_exemplar = codigo_ex;
-        UPDATE emprestimo SET status = 'FECHADO' WHERE codigo_exemplar = codigo_ex;
-        
+        COMMIT; 
         OPEN cursor_emp;
-            LOOP
-                FETCH cursor_emp INTO emp_aux;
-                EXIT WHEN cursor_emp%NOTFOUND;
+        FETCH cursor_emp INTO emp_aux;
                 
-                IF MONTHS_BETWEEN(data_d,data_e) < 1 THEN
-                    emprestimos_faltando := emprestimos_faltando +1;
-                END IF;
-        
-                
-            END LOOP;
-        CLOSE cursor_emp;
-        
-        IF emprestimos_faltando >= 1 THEN
-            UPDATE leitor SET status = 'BLOQUEADO' WHERE id_leitor = id_l;
-        ELSE 
-            UPDATE leitor SET status = 'DISPONIVEL' WHERE id_leitor = id_l;
+        IF data_d > emp_aux.data_dev THEN
+            UPDATE leitor 
+            SET status = 'BLOQUEADO' 
+            WHERE id_leitor = id_l;
         END IF;
+        
+        INSERT INTO devolucao VALUES(seq_dev.nextval,emp_aux.data_dev,emp_aux.codigo_emp,codigo_ex,id_l,prontuario_f);
+        
+        UPDATE emprestimo 
+        SET status = 'FECHADO' 
+        WHERE codigo_emp = emp_aux.codigo_emp;
+        
+        DBMS_OUTPUT.PUT_LINE('DevoluÁ„o realizada com sucesso!');
+        
+        OPEN cursor_reserva;
+        FETCH cursor_reserva INTO res_aux;
+        
+        IF cursor_reserva%FOUND THEN
+            UPDATE exemplar 
+            SET status = 'RESERVADO' 
+            WHERE codigo_exemplar = codigo_ex;
+            
+            UPDATE reserva 
+            SET status = 'CONCLUIDA' 
+            WHERE codigo_reserva = res_aux.codigo_reserva;
+            
+            SELECT prontuario INTO pront_leitor
+            FROM leitor
+            WHERE id_leitor = res_aux.id_leitor;
+            
+            DBMS_OUTPUT.PUT_LINE('Leitor com o prontuario: ' || pront_leitor || ' dever· retirar o livro reservado em 3 dias!');
+            
+        ELSE
+            UPDATE exemplar 
+            SET status = 'DISPONIVEL' 
+            WHERE codigo_exemplar = codigo_ex;
+        END IF;
+          
+        CLOSE cursor_emp;
+        CLOSE cursor_reserva;
        
         COMMIT;
         
         EXCEPTION 
-        
             WHEN NO_DATA_FOUND THEN
                 ROLLBACK;
                 DBMS_OUTPUT.PUT_LINE('Emprestimo n√£o existe');
@@ -310,8 +316,10 @@ CREATE OR REPLACE PACKAGE BODY biblioteca_admin AS
             WHERE id_leitor =  (SELECT id_leitor
                                 FROM leitor
                                 WHERE prontuario = prontuario_leitor)
-            AND codigo_exemplar = cod_exemplar
-            AND status = 'EM ABERTO';
+            AND id_obra = (SELECT id_obra
+                           FROM exemplar
+                           WHERE codigo_exemplar = cod_exemplar)
+            AND status = 'CONCLUIDA';
         
         aux_reserva cursor_reserva%ROWTYPE;
         
@@ -336,7 +344,7 @@ CREATE OR REPLACE PACKAGE BODY biblioteca_admin AS
             RAISE leitor_erro;
         ELSIF aux_leitor.status = 'BLOQUEADO' THEN
             RAISE leitor_bloaqueado;
-        ELSIF limite_emprestimo(aux_leitor.id_leitor) >= 3 THEN
+        ELSIF limite_emprestimo(aux_leitor.id_leitor) >= 5 THEN
             RAISE limite_emp;
         END IF;
         
@@ -353,7 +361,7 @@ CREATE OR REPLACE PACKAGE BODY biblioteca_admin AS
                     RAISE reservado_por_outro;
                 ELSE
                     UPDATE reserva
-                    SET status = 'CONCLUIDA'
+                    SET status = 'FECHADA'
                     WHERE codigo_reserva = aux_reserva.codigo_reserva;
                 END IF;
         END IF;
@@ -403,24 +411,24 @@ END biblioteca_admin;
 
 SET SERVEROUTPUT ON;
 
+BEGIN 
+    biblioteca_admin.emprestimo_procedure(1710052,1,1);
+END;
+/
+    
+BEGIN 
+    --biblioteca_admin.registrar_reserva(1,1710125,1);
+    
+    biblioteca_admin.gera_devolucao(1,SYSDATE,2,1);
+    
+END;
+/
 
+select * from reserva;
+select * from leitor;
+select * from exemplar;
 select * from emprestimo;
-select * from reserva;
-BEGIN 
-    biblioteca_admin.emprestimo_procedure(1710125,1,5);
-    
-END;
-/
-    
-BEGIN 
-    biblioteca_admin.registrar_reserva(1,1710052,1);
-    
-END;
-/
-
-select * from reserva;
-
-  SELECT id_leitor,codigo_exemplar 
-        FROM reserva
-        WHERE codigo_exemplar = 2
-        AND data_reserva = MIN(data_reserva);
+select * from devolucao;
+update reserva set data_reserva = SYSDATE+1 WHERE ID_LEITOR = 2;
+update emprestimo set status = 'EM ANDAMENTO' where codigo_emp = 1;
+  
