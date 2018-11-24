@@ -18,6 +18,8 @@ CREATE OR REPLACE PACKAGE biblioteca_admin AS
     )
     RETURN BOOLEAN;
     
+    --PROCEDURE limpa_reserva;
+    
     --Retorna a quantidade de exemplares emprestado(EM ANDAMENTO) do leitor.
     FUNCTION limite_emprestimo(
         leitor_id INT
@@ -128,8 +130,36 @@ CREATE OR REPLACE PACKAGE BODY biblioteca_admin AS
             WHEN NO_DATA_FOUND THEN
                 RETURN false; 
     END existe_funcionario;
-
-
+    
+------------------------- LIMPA RESERVA (3 dias)
+    PROCEDURE limpa_reserva
+    IS
+        CURSOR cursor_reserva IS
+        SELECT codigo_reserva, id_leitor,id_obra, data_reserva
+        FROM reserva
+        WHERE status = 'CONCLUIDA';
+        
+        res_aux cursor_reserva%ROWTYPE;
+        dif INT;
+        
+    BEGIN
+        OPEN cursor_reserva;
+        
+        LOOP
+            FETCH cursor_reserva INTO res_aux;
+            EXIT WHEN cursor_reserva%NOTFOUND;
+            
+            dif := SYSDATE - res_aux.data_reserva;
+            
+            IF dif > 3 THEN
+                UPDATE reserva 
+                SET status = 'CANCELADA'
+                WHERE codigo_reserva = res_aux.codigo_reserva;
+            
+            END IF;
+        END LOOP;
+    END limpa_reserva;
+        
 ------------- REGISTRAR RESERVA
     PROCEDURE registrar_reserva(
         id_obra_l INT,prontuario_l INT,prontuario_func_l INT
@@ -214,7 +244,7 @@ CREATE OR REPLACE PACKAGE BODY biblioteca_admin AS
         CURSOR cursor_emp IS
         SELECT codigo_emp, status, data_dev
         FROM emprestimo 
-        WHERE  codigo_exemplar =  codigo_ex
+        WHERE  codigo_exemplar = codigo_ex
         AND id_leitor = id_l
         AND status = 'EM ANDAMENTO';
         
@@ -248,7 +278,7 @@ CREATE OR REPLACE PACKAGE BODY biblioteca_admin AS
         INSERT INTO devolucao VALUES(seq_dev.nextval,emp_aux.data_dev,emp_aux.codigo_emp,codigo_ex,id_l,prontuario_f);
         
         UPDATE emprestimo 
-        SET status = 'FECHADO' 
+        SET status = 'CONCLUIDO' 
         WHERE codigo_emp = emp_aux.codigo_emp;
         
         DBMS_OUTPUT.PUT_LINE('Devolução realizada com sucesso!');
@@ -262,7 +292,7 @@ CREATE OR REPLACE PACKAGE BODY biblioteca_admin AS
             WHERE codigo_exemplar = codigo_ex;
             
             UPDATE reserva 
-            SET status = 'CONCLUIDA' 
+            SET status = 'CONCLUIDA', data_reserva = SYSDATE
             WHERE codigo_reserva = res_aux.codigo_reserva;
             
             SELECT prontuario INTO pront_leitor
