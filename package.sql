@@ -19,6 +19,7 @@ CREATE OR REPLACE PACKAGE biblioteca_admin AS
     RETURN BOOLEAN;
     
     --PROCEDURE limpa_reserva;
+    PROCEDURE limpa_reserva;
     
     --Retorna a quantidade de exemplares emprestado(EM ANDAMENTO) do leitor.
     FUNCTION limite_emprestimo(
@@ -449,7 +450,9 @@ END;
 BEGIN 
     --biblioteca_admin.registrar_reserva(1,1710125,1);
     
-    biblioteca_admin.gera_devolucao(1,SYSDATE,2,1);
+    --biblioteca_admin.gera_devolucao(1,SYSDATE,2,1);
+    
+    biblioteca_admin.limpa_reserva;
     
 END;
 /
@@ -460,5 +463,5 @@ select * from exemplar;
 select * from emprestimo;
 select * from devolucao;
 update reserva set data_reserva = SYSDATE+1 WHERE ID_LEITOR = 2;
-update emprestimo set status = 'EM ANDAMENTO' where codigo_emp = 1;
-  
+update emprestimo set status = 'CONCLUIDA' where codigo_emp = 2;
+update reserva set data_reserva = SYSDATE-4, status = 'CONCLUIDA' WHERE ID_LEITOR = 2;
