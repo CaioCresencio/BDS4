@@ -116,7 +116,9 @@ CREATE TABLE reserva (
     id_obra INT NOT NULL,
     prontuario_func INT NOT NULL,
     id_leitor INT NOT NULL,
+    codigo_exemplar INT DEFAULT NULL,
     FOREIGN KEY (id_obra) REFERENCES  obra_literaria (id_obra),
+    FOREIGN KEY (codigo_exemplar) REFERENCES  exemplar (codigo_exemplar),
     FOREIGN KEY (prontuario_func) REFERENCES funcionario(prontuario_func),
     FOREIGN KEY (id_leitor) REFERENCES leitor(id_leitor)
 ); 

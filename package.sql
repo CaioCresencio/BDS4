@@ -136,7 +136,7 @@ CREATE OR REPLACE PACKAGE BODY biblioteca_admin AS
     PROCEDURE limpa_reserva
     IS
         CURSOR cursor_reserva IS
-        SELECT codigo_reserva, id_leitor,id_obra, data_reserva
+        SELECT codigo_reserva, id_leitor,id_obra, data_reserva, codigo_exemplar
         FROM reserva
         WHERE status = 'CONCLUIDA';
         
@@ -156,6 +156,10 @@ CREATE OR REPLACE PACKAGE BODY biblioteca_admin AS
                 UPDATE reserva 
                 SET status = 'CANCELADA'
                 WHERE codigo_reserva = res_aux.codigo_reserva;
+                
+                UPDATE exemplar 
+                SET status = 'DISPONIVEL'
+                WHERE codigo_exemplar = res_aux.codigo_exemplar;
             
             END IF;
         END LOOP;
@@ -210,7 +214,7 @@ CREATE OR REPLACE PACKAGE BODY biblioteca_admin AS
         IF cursor_disponivel%FOUND THEN
             RAISE exception_disponivel;
         ELSE
-            INSERT INTO reserva VALUES(seq_reserva.nextval,SYSDATE,'EM ABERTO',id_obra_l,prontuario_func_l,aux_leitor.id_leitor);
+            INSERT INTO reserva VALUES(seq_reserva.nextval,SYSDATE,'EM ABERTO',id_obra_l,prontuario_func_l,aux_leitor.id_leitor, null);
             DBMS_OUTPUT.PUT_LINE('Reserva efetuada com sucesso!');
         END IF;
             
@@ -282,7 +286,7 @@ CREATE OR REPLACE PACKAGE BODY biblioteca_admin AS
         SET status = 'CONCLUIDO' 
         WHERE codigo_emp = emp_aux.codigo_emp;
         
-        DBMS_OUTPUT.PUT_LINE('Devolução realizada com sucesso!');
+        DBMS_OUTPUT.PUT_LINE('Devoluï¿½ï¿½o realizada com sucesso!');
         
         OPEN cursor_reserva;
         FETCH cursor_reserva INTO res_aux;
@@ -296,11 +300,15 @@ CREATE OR REPLACE PACKAGE BODY biblioteca_admin AS
             SET status = 'CONCLUIDA', data_reserva = SYSDATE
             WHERE codigo_reserva = res_aux.codigo_reserva;
             
+            UPDATE reserva 
+            SET codigo_exemplar = codigo_ex
+            WHERE codigo_reserva = res_aux.codigo_reserva;
+            
             SELECT prontuario INTO pront_leitor
             FROM leitor
             WHERE id_leitor = res_aux.id_leitor;
             
-            DBMS_OUTPUT.PUT_LINE('Leitor com o prontuario: ' || pront_leitor || ' deverá retirar o livro reservado em 3 dias!');
+            DBMS_OUTPUT.PUT_LINE('Leitor com o prontuario: ' || pront_leitor || ' deverï¿½ retirar o livro reservado em 3 dias!');
             
         ELSE
             UPDATE exemplar 
@@ -443,14 +451,14 @@ END biblioteca_admin;
 SET SERVEROUTPUT ON;
 
 BEGIN 
-    biblioteca_admin.emprestimo_procedure(1710052,1,1);
+    biblioteca_admin.emprestimo_procedure(1710052,1,5);
 END;
 /
     
 BEGIN 
     --biblioteca_admin.registrar_reserva(1,1710125,1);
     
-    --biblioteca_admin.gera_devolucao(1,SYSDATE,2,1);
+    --biblioteca_admin.gera_devolucao(1,SYSDATE,1,1);
     
     biblioteca_admin.limpa_reserva;
     
