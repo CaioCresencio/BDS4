@@ -1,0 +1,9 @@
+RODAR A SEQUENCIA DE ARQUIVOS
+
+Logar como SYS
+- 'user.sql' como SYSDBA
+
+Logar com o usuario da biblioteca
+- 'estrutua.sql' com o usuario da biblioteca.
+- 'package.sql' como usuario da biblioteca.
+
