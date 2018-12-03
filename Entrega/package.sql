@@ -218,6 +218,7 @@ CREATE OR REPLACE PACKAGE BODY biblioteca_admin AS
         exception_leitor EXCEPTION;
         exception_pLeitor EXCEPTION;
         exception_disponivel EXCEPTION;
+        funcionarioE EXCEPTION;
         
     BEGIN
         COMMIT;
@@ -229,6 +230,9 @@ CREATE OR REPLACE PACKAGE BODY biblioteca_admin AS
             RAISE exception_leitor;
         END IF;
         
+        IF NOT existe_funcionario(prontuario_func_l) THEN
+            RAISE funcionarioE;
+        END IF;
         status_l := status_leitor(prontuario_l);
         
         IF status_l = 'BLOQUEADO' THEN
@@ -260,6 +264,9 @@ CREATE OR REPLACE PACKAGE BODY biblioteca_admin AS
             WHEN exception_disponivel THEN
                 DBMS_OUTPUT.PUT_LINE('Ainda possui exemplares disponiveis!');
                 ROLLBACK;
+            WHEN funcionarioE THEN
+                ROLLBACK;
+                DBMS_OUTPUT.PUT_LINE('Funcionario nao registrado!');
             WHEN OTHERS THEN
                 ROLLBACK;
                 DBMS_OUTPUT.PUT_LINE(SQLCODE);
