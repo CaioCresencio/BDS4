@@ -16,6 +16,11 @@ CREATE OR REPLACE PACKAGE biblioteca_admin AS
     FUNCTION existe_funcionario(
         pront_func INT
     )
+    --Verifica se o leitor existe
+    RETURN BOOLEAN;
+       FUNCTION existe_leitor(
+        id_l INT
+    )
     RETURN BOOLEAN;
     
     --PROCEDURE limpa_reserva;
@@ -131,6 +136,29 @@ CREATE OR REPLACE PACKAGE BODY biblioteca_admin AS
             WHEN NO_DATA_FOUND THEN
                 RETURN false; 
     END existe_funcionario;
+    
+------------- EXISTE LEITOR
+    FUNCTION existe_leitor(
+        id_l INT
+    )
+    RETURN boolean
+    IS
+        teste int;
+    BEGIN
+    
+        SELECT id_l into teste
+        FROM leitor WHERE id_leitor = id_l;
+    
+        RETURN true;
+    
+        EXCEPTION
+            WHEN NO_DATA_FOUND THEN
+                RETURN false; 
+    END existe_leitor;
+    
+    
+    
+    
     
 ------------------------- LIMPA RESERVA (3 dias)
     PROCEDURE limpa_reserva
@@ -261,19 +289,36 @@ CREATE OR REPLACE PACKAGE BODY biblioteca_admin AS
                          WHERE codigo_exemplar = codigo_ex)
         AND data_reserva = (SELECT MIN(data_reserva)
                             FROM reserva
-                            WHERE id_obra = 1)
+                            WHERE id_obra = (SELECT id_obra
+                                             FROM exemplar
+                                             WHERE codigo_exemplar = codigo_ex))
         AND status = 'EM ABERTO';
 
         emp_aux cursor_emp%ROWTYPE;
         res_aux cursor_reserva%ROWTYPE;
         
+        emprestimoE EXCEPTION;
+        funcionarioE EXCEPTION;
+        leitorE EXCEPTION;
         pront_leitor INT;
         
     BEGIN
         COMMIT; 
         OPEN cursor_emp;
         FETCH cursor_emp INTO emp_aux;
-                
+        
+        IF NOT existe_leitor(id_l) THEN
+            RAISE leitorE;
+        END IF;
+        
+        IF cursor_emp%NOTFOUND THEN
+            RAISE emprestimoE;
+        END IF;
+    
+        IF NOT existe_funcionario(prontuario_f) THEN
+            RAISE funcionarioE;
+        END IF;
+                    
         IF data_d > emp_aux.data_dev THEN
             UPDATE leitor 
             SET status = 'BLOQUEADO' 
@@ -325,6 +370,15 @@ CREATE OR REPLACE PACKAGE BODY biblioteca_admin AS
             WHEN NO_DATA_FOUND THEN
                 ROLLBACK;
                 DBMS_OUTPUT.PUT_LINE('Emprestimo não existe');
+            WHEN funcionarioE THEN
+                ROLLBACK;
+                DBMS_OUTPUT.PUT_LINE('Funcionario nao encontrado!');
+            WHEN leitorE THEN
+                ROLLBACK;
+                DBMS_OUTPUT.PUT_LINE('Leitor nao encontrado!');
+            WHEN emprestimoE THEN
+                ROLLBACK;
+                DBMS_OUTPUT.PUT_LINE('Emprestimo nao encontrado!');
             WHEN others THEN
                 ROLLBACK;
                 DBMS_OUTPUT.PUT_LINE(SQLCODE);
@@ -454,22 +508,53 @@ BEGIN
     biblioteca_admin.emprestimo_procedure(1710052,1,5);
 END;
 /
+ 
     
 BEGIN 
-    --biblioteca_admin.registrar_reserva(1,1710125,1);
+
+    biblioteca_admin.emprestimo_procedure(1710125,1,1);
+    biblioteca_admin.emprestimo_procedure(1710052,1,2);
+    biblioteca_admin.emprestimo_procedure(1710052,1,3);
+    biblioteca_admin.emprestimo_procedure(1710125,1,4); 
+    biblioteca_admin.emprestimo_procedure(1710324,1,5);
+    biblioteca_admin.emprestimo_procedure(1710324,1,7);
+END;
+/
     
-    --biblioteca_admin.gera_devolucao(1,SYSDATE,1,1);
+    select * from leitor;
+
+BEGIN 
+    biblioteca_admin.registrar_reserva(1,1710157,1);
     
-    biblioteca_admin.limpa_reserva;
+    --biblioteca_admin.gera_devolucao(3,SYSDATE,1,1);
+    --biblioteca_admin.emprestimo_procedure(1710125,1,1);   
+    --biblioteca_admin.limpa_reserva;
+END;
+/
+
+BEGIN 
+    --biblioteca_admin.registrar_reserva(1,1710157,1);
     
+    --biblioteca_admin.gera_devolucao(1,SYSDATE,2,1);
+    --biblioteca_admin.emprestimo_procedure(1710157,1,1);   
+    --biblioteca_admin.limpa_reserva;
 END;
 /
 
 select * from reserva;
+select * from obra_literaria;
 select * from leitor;
 select * from exemplar;
 select * from emprestimo;
 select * from devolucao;
+select * from obra_literaria;
+
+delete from reserva;
+delete from emprestimo;
+delete from devolucao;
+
+
+UPDATE exemplar SET STATUS = 'DISPONIVEL';
 update reserva set data_reserva = SYSDATE+1 WHERE ID_LEITOR = 2;
 update emprestimo set status = 'CONCLUIDA' where codigo_emp = 2;
-update reserva set data_reserva = SYSDATE-4, status = 'CONCLUIDA' WHERE ID_LEITOR = 2;
+update reserva set data_reserva = SYSDATE-4, status = 'CONCLUIDA' WHERE ID_LEITOR = 5;
